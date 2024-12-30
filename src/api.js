@@ -1,17 +1,24 @@
 // src/api.js
-import data from './assets/data/data.json'; // Asegúrate que esta ruta es correcta
-
 async function fetchData(endpoint) {
-    return new Promise((resolve, reject) => {
+    try {
+        const response = await fetch('/assets/data/data.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
         if (endpoint === 'equipoMedico') {
-            resolve(data.equipoMedico);
+            return data.equipoMedico;
         }
         if (endpoint === 'servicios') {
-            resolve(data.servicios);
+            return data.servicios;
         }
-        reject(new Error(`Invalid endpoint: ${endpoint}`));
-    });
-}
+        throw new Error(`Invalid endpoint: ${endpoint}`);
 
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;  // Re-lanzamos el error para que el componente lo maneje
+    }
+}
 
 export default fetchData;

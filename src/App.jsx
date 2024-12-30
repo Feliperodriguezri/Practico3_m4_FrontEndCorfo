@@ -1,14 +1,14 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
-import Home from './Components/views/Home';
-import EquipoMedico from './Components/views/EquipoMedico';
-import Citas from './Components/views/Citas';
-import Navbar from './Components/Navbar';
+import Home from './components/views/Home';
+import EquipoMedico from './components/views/EquipoMedico';
+import Citas from './components/views/Citas';
+import Navbar from './components/Navbar';
 
 function App() {
     return (
         <BrowserRouter>
-          <Navbar/>
+            <Navbar />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/equipo-medico" element={<EquipoMedico />} />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import fetchData from '../../api';
 
 function Citas() {
     const [nombre, setNombre] = useState('');
@@ -8,23 +9,48 @@ function Citas() {
     const [medico, setMedico] = useState('');
     const [errors, setErrors] = useState({});
     const [medicosPorEspecialidad, setMedicosPorEspecialidad] = useState({});
+    const [servicios, setServicios] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
 
     const nombreInputRef = useRef(null);
 
-    const especialidades = ["Cardiología", "Pediatría", "Dermatología", "Neurología"];
-    const medicos = {
-        "Cardiología": ["Dr. John Doe"],
-        "Pediatría": ["Dra. Jane Smith"],
-        "Dermatología": ["Dr. David Lee"],
-        "Neurología": ["Dra. Ana Flores"],
-    };
 
     useEffect(() => {
-        setMedicosPorEspecialidad(medicos);
+        const loadData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const equipoMedicoData = await fetchData('equipoMedico');
+                const serviciosData = await fetchData('servicios');
+                const medicosMap = {};
+
+                serviciosData.forEach(servicio => {
+                    medicosMap[servicio.nombre] = equipoMedicoData
+                        .filter(doctor => doctor.especialidad === servicio.nombre)
+                        .map(doctor => doctor.nombre);
+                });
+
+                setMedicosPorEspecialidad(medicosMap);
+                setServicios(serviciosData);
+
+
+            } catch (err) {
+                setError(err)
+            } finally {
+                setLoading(false)
+            }
+
+        };
+        loadData();
         if (nombreInputRef.current) {
             nombreInputRef.current.focus();
         }
     }, []);
+
+
+
 
     const validateForm = () => {
         let newErrors = {};
@@ -72,6 +98,15 @@ function Citas() {
         setEspecialidad(event.target.value);
         setMedico('');
     }
+
+
+    if (loading) {
+        return <p>Cargando formulario de citas...</p>
+    }
+    if (error) {
+        return <p>Error al cargar formulario de citas: {error.message}</p>
+    }
+
 
     return (
         <div className="container">
@@ -121,8 +156,8 @@ function Citas() {
                         onChange={handleEspecialidadChange}
                     >
                         <option value="">Selecciona una especialidad</option>
-                        {especialidades.map((esp, index) => (
-                            <option key={index} value={esp}>{esp}</option>
+                        {servicios.map((esp, index) => (
+                            <option key={index} value={esp.nombre}>{esp.nombre}</option>
                         ))}
                     </select>
                     {errors.especialidad && <div className="invalid-feedback">{errors.especialidad}</div>}

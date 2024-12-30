@@ -23,6 +23,12 @@
             "nombre": "Dra. Ana Ramírez",
             "especialidad": "Dermatología",
             "horario": "Martes a Sábado, 8:00 AM - 1:00 PM"
+        },
+        {
+            "id": 5,
+            "nombre": "Dr. Felipe Rodriguez",
+            "especialidad": "Medicina general",
+            "horario": "Martes a Sábado, 8:00 AM - 1:00 PM"
         }
     ],
     "servicios": [
@@ -49,6 +55,12 @@
             "nombre": "Dermatología",
             "precio": 75,
             "descripcion": "Servicios para el cuidado de la piel"
+        },
+        {
+            "id": 5,
+            "nombre": "Medicina General",
+            "precio": 75,
+            "descripcion": "Medicina General"
         }
     ]
 }

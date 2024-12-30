@@ -1,41 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DoctorCard from '../DoctorCard';
+import fetchData from '../../api';
 
 function EquipoMedico() {
+    const [doctors, setDoctors] = useState([]);
     const [filterSpecialty, setFilterSpecialty] = useState('');
-    const doctors = [
-        {
-            name: "Dr. John Doe",
-            specialty: "Cardiólogo",
-            image: "https://via.placeholder.com/200x150/007bff/ffffff?text=Dr.Doe"
-        },
-        {
-            name: "Dra. Jane Smith",
-            specialty: "Pediatra",
-            image: "https://via.placeholder.com/200x150/28a745/ffffff?text=Dr.Smith"
-        },
-        {
-            name: "Dr. David Lee",
-            specialty: "Dermatólogo",
-            image: "https://via.placeholder.com/200x150/dc3545/ffffff?text=Dr.Lee"
-        },
-        {
-            name: "Dra. Ana Flores",
-            specialty: "Neuróloga",
-            image: "https://via.placeholder.com/200x150/ffc107/000000?text=Dr.Flores"
-        }
-    ];
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadData = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const data = await fetchData('equipoMedico');
+                setDoctors(data);
+            } catch (err) {
+                setError(err);
+            } finally {
+                setLoading(false)
+            }
+        };
+        loadData();
+    }, []);
 
     const handleFilterChange = (event) => {
         setFilterSpecialty(event.target.value);
     };
 
     const filteredDoctors = filterSpecialty
-        ? doctors.filter(doctor => doctor.specialty === filterSpecialty)
+        ? doctors.filter(doctor => doctor.especialidad === filterSpecialty)
         : doctors;
 
-    // Get Unique Specialties
-    const uniqueSpecialties = ["Todas", ...new Set(doctors.map(doctor => doctor.specialty))];
+    const uniqueSpecialties = ["Todas", ...new Set(doctors.map(doctor => doctor.especialidad))];
+
+    if (loading) {
+        return <p>Cargando equipo médico...</p>;
+    }
+    if (error) {
+        return <p>Error al cargar equipo médico: {error.message}</p>
+    }
 
     return (
         <div>
@@ -54,9 +58,9 @@ function EquipoMedico() {
                 {filteredDoctors.map((doctor, index) => (
                     <div key={index} className="col-md-4 mb-3">
                         <DoctorCard
-                            name={doctor.name}
-                            specialty={doctor.specialty}
-                            image={doctor.image}
+                            name={doctor.nombre}
+                            specialty={doctor.especialidad}
+                            image={`https://via.placeholder.com/200x150/${Math.floor(Math.random() * 16777215).toString(16)}/ffffff?text=${doctor.nombre.split(' ')[0]}`} // placeholder con nombre del doctor
                         />
                     </div>
                 ))}
