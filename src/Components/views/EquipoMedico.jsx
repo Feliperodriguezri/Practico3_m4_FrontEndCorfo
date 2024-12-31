@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types'; // Importamos PropTypes
 import DoctorCard from '../DoctorCard';
 import fetchData from '../../api';
 
@@ -68,5 +69,8 @@ function EquipoMedico() {
         </div>
     );
 }
+
+// Definimos los PropTypes para el componente EquipoMedico. Nuevamente, no recibe props del padre, por lo que esta vacío.
+EquipoMedico.propTypes = {};
 
 export default EquipoMedico;

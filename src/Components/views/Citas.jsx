@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import PropTypes from 'prop-types'; // Importamos PropTypes
 import fetchData from '../../api';
 
 function Citas() {
@@ -13,9 +14,7 @@ function Citas() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-
     const nombreInputRef = useRef(null);
-
 
     useEffect(() => {
         const loadData = async () => {
@@ -24,31 +23,35 @@ function Citas() {
             try {
                 const equipoMedicoData = await fetchData('equipoMedico');
                 const serviciosData = await fetchData('servicios');
-                const medicosMap = {};
 
+                // Optimización: Preprocesar doctores en un mapa por especialidad
+                const doctorsBySpecialityMap = equipoMedicoData.reduce((acc, doctor) => {
+                    acc[doctor.especialidad] = acc[doctor.especialidad] || [];
+                    acc[doctor.especialidad].push(doctor.nombre);
+                    return acc;
+                }, {});
+
+                const medicosMap = {};
                 serviciosData.forEach(servicio => {
-                    medicosMap[servicio.nombre] = equipoMedicoData
-                        .filter(doctor => doctor.especialidad === servicio.nombre)
-                        .map(doctor => doctor.nombre);
+                    medicosMap[servicio.nombre] = doctorsBySpecialityMap[servicio.nombre] || [];
                 });
 
                 setMedicosPorEspecialidad(medicosMap);
                 setServicios(serviciosData);
 
-
             } catch (err) {
-                setError(err)
+                setError(err);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-
         };
+
         loadData();
+
         if (nombreInputRef.current) {
             nombreInputRef.current.focus();
         }
     }, []);
-
 
 
 
@@ -98,6 +101,12 @@ function Citas() {
         setEspecialidad(event.target.value);
         setMedico('');
     }
+
+    const medicosOptions = useMemo(() => {
+        return medicosPorEspecialidad[especialidad]?.map((med, index) => (
+            <option key={index} value={med}>{med}</option>
+        ));
+    }, [medicosPorEspecialidad, especialidad]);
 
 
     if (loading) {
@@ -173,9 +182,7 @@ function Citas() {
                         disabled={!especialidad}
                     >
                         <option value="">Selecciona un médico</option>
-                        {medicosPorEspecialidad[especialidad]?.map((med, index) => (
-                            <option key={index} value={med}>{med}</option>
-                        ))}
+                        {medicosOptions}
                     </select>
                     {errors.medico && <div className="invalid-feedback">{errors.medico}</div>}
                 </div>
@@ -185,5 +192,9 @@ function Citas() {
         </div>
     );
 }
+
+// Definimos los PropTypes para el componente Citas. En este caso, el componente no recibe props del padre, entonces esta definición está vacía.
+Citas.propTypes = {};
+
 
 export default Citas;

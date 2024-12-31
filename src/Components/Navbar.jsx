@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'; // Importamos PropTypes
 import { Link } from 'react-router-dom';
 
 function Navbar() {
@@ -28,5 +29,8 @@ function Navbar() {
         </>
     );
 }
+
+// Definimos los PropTypes para el componente Navbar. Al no recibir props de un padre, queda vacío
+Navbar.propTypes = {};
 
 export default Navbar;

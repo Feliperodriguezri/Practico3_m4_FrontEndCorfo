@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'; // Importamos PropTypes
 
 function DoctorCard({ name, specialty, image }) {
     return (
@@ -11,5 +12,12 @@ function DoctorCard({ name, specialty, image }) {
         </div>
     );
 }
+
+// Definimos los PropTypes para el componente DoctorCard. Aquí especificamos los tipos esperados para las props.
+DoctorCard.propTypes = {
+    name: PropTypes.string.isRequired, // name debe ser una cadena y es requerida.
+    specialty: PropTypes.string.isRequired, // specialty debe ser una cadena y es requerida.
+    image: PropTypes.string.isRequired, // image debe ser una cadena y es requerida.
+};
 
 export default DoctorCard;

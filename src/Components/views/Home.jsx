@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import PropTypes from 'prop-types';  // Importamos PropTypes
 
 function Home() {
     const cardiologiaRef = useRef(null);
@@ -66,5 +67,8 @@ function Home() {
         </div>
     );
 }
+
+// Definimos los PropTypes para el componente Home. Al igual que los demás, no recibe props directamente desde un componente padre.
+Home.propTypes = {};
 
 export default Home;
